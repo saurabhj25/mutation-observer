@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MutationObserver</title>
+    <style>
+        #parent-div {
+            display: flex;
+        }
+
+        #parent-div>div {
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid blue;
+        }
+
+        .div1 {
+            background-color: brown;
+        }
+
+        .div2 {
+            background-color: lightblue;
+        }
+
+        .div3 {
+            background-color: lightcoral;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>The MutationObserver interface provides the ability to watch for changes being made to the DOM tree.</h1>
+    <div id="parent-div">
+        <div class="div1">div 1</div>
+        <div class="div2">div 2</div>
+        <div class="div3">div 3</div>
+        <div class="other-div">
+            <div>children:other div</div>
+        </div>
+    </div>
+    <button onclick="deleteDiv()">Delete Div</button>
+    <button onclick="deleteInnerDiv()">Delete Inner Div</button>
+    <button onclick="updateAttribute()">Update Attribute</button>
+    <button onclick="updateDivValue()">Update Div Value</button>
+    <script>
+        // Select the node that will be observed for mutations
+        const targetNode = document.getElementById("parent-div");
+        // Options for the observer (which mutations to observe)
+        const config = { attributes: true, childList: true, subtree: true };
+
+        // Callback function to execute when mutations are observed
+        const callback = (mutationList, observer) => {
+            console.log('mutationList::', mutationList);
+            for (const mutation of mutationList) {
+                if (mutation.type === "childList") {
+                    console.log("A child node has been added or removed.");
+                } else if (mutation.type === "attributes") {
+                    console.log(`The ${mutation.attributeName} attribute was modified.`);
+                }
+            }
+        };
+        // Create an observer instance linked to the callback function
+        const observer = new MutationObserver(callback);
+
+        // Start observing the target node for configured mutations
+        observer.observe(targetNode, config);
+
+        // Later, you can stop observing
+        //observer.disconnect();
+
+
+        function deleteDiv() {
+            document.getElementById('parent-div').children[0].remove();
+        }
+        function deleteInnerDiv() {
+            document.getElementsByClassName('other-div')[0].children[0].remove();
+        }
+        function updateAttribute() {
+            document.getElementById('parent-div').children[0].className = 'div2';
+        }
+        function updateDivValue() {
+            document.getElementById('parent-div').children[0].textContent = 'changed value';
+        }
+    </script>
+</body>
+
+</html>
